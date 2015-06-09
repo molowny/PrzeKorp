@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+  .concordance(ng-controller="concordance")
+    //- h1 Konkordancja {{ tags.length }}
+
+    form(action="")
+      //- label(for="nmns") NMNS:
+      //- select(name="nmns" ng-model="query.nmns")
+      //-   each n in nmnsList
+      //-     option(value="#{n.type}")= n.type
+
+      label(for="glosa") Glosa:
+      select(name="glosa" ng-model="query.glosaId")
+        each g in glosaList
+          option(value="#{g.id}")= g.name
+
+      label(for="distance") Odległość:
+      select(name="distance" ng-model="query.distance")
+        each i in [2, 3, 4, 5]
+          option(value="#{i}")= i
+
+      //- button(type="submit") Szukaj
+
+    .timelines
+      timeline(ng-repeat="tag in tags" data="tag")

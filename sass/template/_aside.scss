@@ -1,0 +1,53 @@
+// Import Google Web Fonts
+// @import url(http://fonts.googleapis.com/css?family=Montserrat:400|Muli:300,400|Inconsolata);
+
+aside {
+  background: $grey;
+
+  header {
+    background: $blue;
+    color: $white;
+    padding: $padding;
+
+    h1 {
+      text-align: center;
+    }
+  }
+
+  nav {
+    color: $light-grey;
+    font-size: 1.2em;
+    border-right: 1px solid $grey;
+
+    a {
+      text-decoration: none;
+    }
+
+    ol {
+      counter-reset: item;
+      padding: 0;
+
+      li {
+        display: block;
+        padding: 5px 10px;
+        border-bottom: 1px solid $grey;
+        transition: .5s background;
+
+        a {
+          // display: block;
+        }
+
+        &:before {
+          content: counter(item) ". ";
+          counter-increment: item;
+          opacity: .5;
+        }
+
+        &.active, &:hover {
+          background: $white;
+          color: $grey;
+        }
+      }
+    }
+  }
+}

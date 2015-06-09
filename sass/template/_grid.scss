@@ -1,0 +1,21 @@
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  // flex: 1;
+
+  .content {
+    display: flex;
+    flex: 1;
+  }
+
+  aside {
+    flex: 0 0 16em;
+  }
+
+  main {
+    flex: 1;
+    padding: $padding;
+  }
+}
+

@@ -1,0 +1,29 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,latin-ext);
+
+$white: #fff;
+$backk: #000;
+$grey: #38424d; $light-grey: #bbb;
+$blue: #1694ca;
+
+$padding: 25px;
+
+
+// Font Family
+$font-size: 14px;
+$font-family: "Roboto", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+// $font-family-header:  "Montserrat", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+// $font-family-mono:    "Inconsolata", monospace;
+// $font-family-serif:   "Georgia", "Times", "Times New Roman", serif;
+
+
+@mixin clearfix {
+  &::after {
+    clear: both;
+    content: '';
+    display: table;
+  }
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none;
+}
