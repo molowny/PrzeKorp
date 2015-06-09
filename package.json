@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "supervisor ./bin/www",
-    "import": "node ./import/import.js"
+    "import": "node ./import/import.js",
+    "import": "node ./import/serge.js"
   },
   "dependencies": {
     "lodash": "~3.9.3",

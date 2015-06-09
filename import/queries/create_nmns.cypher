@@ -1,0 +1,1 @@
+CREATE (:Nmns { type: {type} })

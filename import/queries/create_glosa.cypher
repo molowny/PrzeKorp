@@ -1,0 +1,1 @@
+CREATE (:Glosa { name: {name}, id: {id} })

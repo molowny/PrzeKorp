@@ -1,4 +1,4 @@
-var neoClient = require('seraph')({ server: 'http://localhost:7474', user: 'neo4j', pass: 'neo4j' });
+var neoClient = require('seraph')('http://localhost:7474');
 
 function Nmns () {}
 
