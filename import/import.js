@@ -5,7 +5,7 @@ function getQuery(name) {
 }
 
 var pg = require('pg');
-var pgClient = new pg.Client('postgres://korpus@localhost/korpus');
+var pgClient = new pg.Client('postgres://korpus@127.0.0.1/korpus');
 var neoClient = require('seraph')('http://localhost:7474');
 
 function normalizeTime(time) {
