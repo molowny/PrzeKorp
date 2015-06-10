@@ -9,4 +9,4 @@ from tags
   left join types on tokens.type = types.id
 
 ORDER BY tags.timecode_start
-limit 10
+limit 500
