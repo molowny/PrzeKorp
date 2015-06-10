@@ -1,11 +1,12 @@
 var fs = require('fs');
 
 function getQuery(name) {
-  return fs.readFileSync('queries/' + name, 'utf8');
+  return fs.readFileSync(__dirname + '/queries/' + name, 'utf8');
 }
 
 var pg = require('pg');
-var pgClient = new pg.Client('postgres://korpus:korpus123@localhost/korpus');
+// var pgClient = new pg.Client('postgres://korpus:korpus123@localhost/korpus');
+var pgClient = new pg.Client('postgres://olownia@localhost/korpus');
 var neoClient = require('seraph')('http://localhost:7474');
 
 function normalizeTime(time) {
@@ -20,57 +21,78 @@ neoClient.query(getQuery('clear.cypher'), function () {
 
     pgClient.query(getQuery('glosy.sql'), function(err, result) {
       if (err) throw err;
+
+      var txnGlosa = neoClient.batch();
+
       result.rows.forEach(function (row) {
-        neoClient.query(getQuery('create_glosa.cypher'), row, function(err, results) {
+        txnGlosa.query(getQuery('create_glosa.cypher'), row, function(err, results) {
           if (err) throw err;
-          console.log('Glosa: #' + row.id);
+          // console.log('Glosa: #' + row.id);
         });
       });
-    });
 
-    ['NMNS-INTON', 'NMNS_BODY', 'NMNS_HEAD', 'NMNS_EYE_GAZE', 'NMNS-BODY', 'NMNS_EYE_BROWS', 'NMNS_FACE', 'NMNS_INTON', 'NMNS_EYEGAZE', 'NMNS_NOSE'].forEach(function (type) {
-      neoClient.query(getQuery('create_nmns.cypher'), { type: type }, function(err, results) {
+      txnGlosa.commit(function (err, results) {
         if (err) throw err;
-        console.log('Nmns: #' + type);
-      });
-    });
+        console.log('Glos: ' + results.length);
 
-    pgClient.query(getQuery('movies.sql'), function(err, result) {
-      if (err) throw err;
+        var txnNmns = neoClient.batch();
 
-      result.rows.forEach(function (movie) {
-        pgClient.query({ text: getQuery('tags.sql'), values: [movie.id] }, function(err, result) {
-          if (err) throw err;
-
-          var tags = [];
-
-          result.rows.forEach(function (tag) {
-            tag.movie = movie.name;
-
-            if (['glosa', 'glosa_druga_reka'].indexOf(tag.tier) != -1) {
-              tag.hand = tag.tier == 'glosa' ? 'primary' : 'secondary';
-
-              neoClient.query(getQuery('create_tag_with_glosa.cypher'), tag, function(err, results) {
-                if (err) throw err;
-
-                console.log('Tag: #' + tag.id, tag.tier, tag.type_id);
-              });
-            }
-
-            // select tiers.name from tiers where name ilike 'nmns%'  group by tiers.name
-            if (['NMNS-INTON', 'NMNS_BODY', 'NMNS_HEAD', 'NMNS_EYE_GAZE', 'NMNS-BODY', 'NMNS_EYE_BROWS', 'NMNS_FACE', 'NMNS_INTON', 'NMNS_EYEGAZE', 'NMNS_NOSE'].indexOf(tag.tier) != -1) {
-              tag.hand = 'primary'; // todo
-
-              neoClient.query(getQuery('create_tag_with_nmns.cypher'), tag, function(err, results) {
-                if (err) throw err;
-
-                console.log('Tag: #' + tag.id, tag.tier);
-              });
-            }
+        ['NMNS-INTON', 'NMNS_BODY', 'NMNS_HEAD', 'NMNS_EYE_GAZE', 'NMNS-BODY', 'NMNS_EYE_BROWS', 'NMNS_FACE', 'NMNS_INTON', 'NMNS_EYEGAZE', 'NMNS_NOSE'].forEach(function (type) {
+          txnNmns.query(getQuery('create_nmns.cypher'), { type: type }, function(err, results) {
+            if (err) throw err;
+            // console.log('Nmns: #' + type);
           });
         });
 
-        // pgClient.end();
+        txnNmns.commit(function (err, results) {
+          if (err) throw err;
+          console.log('NMNS: ' + results.length);
+
+          pgClient.query(getQuery('tags.sql'), function(err, result) {
+            if (err) throw err;
+
+            console.log('Tags in postgres: ' + result.rows.length);
+
+            var txnTag = neoClient.batch();
+
+            result.rows.forEach(function (tag) {
+              if (['glosa', 'glosa_druga_reka'].indexOf(tag.tier) != -1) {
+                tag.hand = tag.tier == 'glosa' ? 'primary' : 'secondary';
+
+                txnTag.query(getQuery('create_tag_with_glosa.cypher'), tag, function(err, results) {
+                  if (err) throw err;
+
+                  // console.log('Tag: #' + tag.id, tag.tier, tag.type_id);
+                });
+              }
+
+              // select tiers.name from tiers where name ilike 'nmns%'  group by tiers.name
+              if (['NMNS-INTON', 'NMNS_BODY', 'NMNS_HEAD', 'NMNS_EYE_GAZE', 'NMNS-BODY', 'NMNS_EYE_BROWS', 'NMNS_FACE', 'NMNS_INTON', 'NMNS_EYEGAZE', 'NMNS_NOSE'].indexOf(tag.tier) != -1) {
+                tag.hand = 'primary'; // todo
+
+                txnTag.query(getQuery('create_tag_with_nmns.cypher'), tag, function(err, results) {
+                  if (err) throw err;
+
+                  // console.log('Tag: #' + tag.id, tag.tier);
+                });
+              }
+            });
+
+            txnTag.commit(function (err, results) {
+              if (err) throw err;
+              console.log('Loaded tags: ' + results.length);
+              pgClient.end();
+            });
+          });
+
+          // pgClient.query(getQuery('movies.sql'), function(err, result) {
+          //   if (err) throw err;
+
+          //   result.rows.forEach(function (movie) {
+          //   });
+          //   // pgClient.end();
+          // });
+        });
       });
     });
   });
