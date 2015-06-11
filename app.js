@@ -10,6 +10,7 @@ var routes = require('./routes/index');
 var video = require('./routes/video');
 var searchApi = require('./routes/api');
 var search = require('./routes/search');
+var help = require('./routes/help');
 
 var app = express();
 
@@ -38,6 +39,7 @@ app.use('/', routes);
 app.use('/video', video);
 app.use('/api', searchApi);
 app.use('/search', search);
+app.use('/help', help);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

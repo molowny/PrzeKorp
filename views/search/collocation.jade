@@ -1,20 +1,11 @@
 extends ../layout
 
 block sidebar
-  - var activeTab = 'concordance'
+  - var activeTab = 'collocation'
 
 block content
-  .concordance(ng-controller="concordance")
+  .collocation(ng-controller="collocation")
     //- h1 Konkordancja {{ tags.length }}
-
-    //- angucomplete-alt(
-    //-   pause="400"
-    //-   selected-object="query.glosaId"
-    //-   remote-url="/api/glosa-autocomplete.json?s="
-    //-   remote-url-data-field="results"
-    //-   title-field="name"
-    //-   minlength="1"
-    //- )
 
     form(action="")
       //- label(for="nmns") NMNS:
@@ -27,8 +18,6 @@ block content
         each g in glosaList
           option(value="#{g.id}")= g.name
 
-
-
       label(for="distance") Odległość:
       select(name="distance" ng-model="query.distance")
         each i in [2, 3, 4, 5, 10, 20]
@@ -36,6 +25,13 @@ block content
 
       //- button(type="submit") Szukaj
 
-    p.alert(ng-hide="concordances.length") Brak wyników.
+    p.alert(ng-hide="collocations.length") Brak wyników.
 
-    timeline(ng-repeat="concordance in concordances" data="concordance")
+    table
+      tbody
+        tr(ng-repeat="collocation in collocations")
+          //- td
+          //-   a(href="" ng-click="show(attendance)" ng-hide="attendance.videoSrc") zobacz
+          //-   video(ng-show="attendance.videoSrc" ng-src="{{ attendance.videoSrc }}" controls)
+          td {{ collocation.name }}
+          td {{ collocation.count }}

@@ -5,13 +5,9 @@ function getQuery(name) {
 }
 
 var pg = require('pg');
-var pgClient = new pg.Client('postgres://korpus:korpus123@localhost/korpus');
-// var pgClient = new pg.Client('postgres://olownia@localhost/korpus');
+// var pgClient = new pg.Client('postgres://korpus:korpus123@localhost/korpus');
+var pgClient = new pg.Client('postgres://olownia@localhost/korpus');
 var neoClient = require('seraph')('http://localhost:7474');
-
-function normalizeTime(time) {
-  return parseInt(time.replace(/:/g, ''));
-}
 
 neoClient.query(getQuery('clear.cypher'), function () {
   console.log('Clearing neo4j db ...');

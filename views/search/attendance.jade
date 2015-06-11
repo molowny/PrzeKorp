@@ -1,0 +1,28 @@
+extends ../layout
+
+block sidebar
+  - var activeTab = 'attendance'
+
+block content
+  .attendance(ng-controller="attendance")
+    //- h1 Konkordancja {{ tags.length }}
+
+    form(action="")
+      label(for="min") Ilość wystąpień od:
+      input(type="number" name="min" ng-model="query.min")
+
+      label(for="max") Do:
+      input(type="number" name="max" ng-model="query.max")
+
+      //- button(type="submit") Szukaj
+
+    p.alert(ng-hide="attendances.length") Brak wyników
+
+    table
+      tbody
+        tr(ng-repeat="attendance in attendances")
+          //- td
+          //-   a(href="" ng-click="show(attendance)" ng-hide="attendance.videoSrc") zobacz
+          //-   video(ng-show="attendance.videoSrc" ng-src="{{ attendance.videoSrc }}" controls)
+          td {{ attendance.g.name }}
+          td {{ attendance.count }}

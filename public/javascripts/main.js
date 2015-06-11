@@ -11,11 +11,11 @@ app.directive('timeline', function ($parse, $timeout) {
       if (!element.find('video').attr('src')) {
         var videoSrc = '/video/' + scope.data.movie + '?from=' + scope.data.from + '&to=' + scope.data.to;
         var posterSrc = '/video/poster/' + scope.data.movie + '?from=' + scope.data.from + '&to=' + scope.data.to;
-        element.find('video').attr('poster', posterSrc)
+        element.find('video').attr('poster', posterSrc);
         element.find('video').attr('src', videoSrc);
       }
 
-      var $details = $('<div class="details">cfsdddd</div>');
+      var $details = $('<div class="details"></div>');
       element.append($details);
       $details.html(scope.data.movie + ': ' + scope.data.from + ' - ' + scope.data.to);
 
@@ -205,9 +205,37 @@ app.service('SearchApi', function ($http, $q) {
     concordance: function (query) {
       var deferred = $q.defer();
 
-      $http.get('/api/concordance.json', { params: query })
-        .success(function (tags) {
-          deferred.resolve(tags);
+      $http.get('/api/concordance.json', { params: query, cache: true })
+        .success(function (concordances) {
+          deferred.resolve(concordances);
+        })
+        .error(function (msg) {
+          deferred.reject(msg);
+        });
+
+      return deferred.promise;
+    },
+
+    collocation: function (query) {
+      var deferred = $q.defer();
+
+      $http.get('/api/collocation.json', { params: query, cache: true })
+        .success(function (collocations) {
+          deferred.resolve(collocations);
+        })
+        .error(function (msg) {
+          deferred.reject(msg);
+        });
+
+      return deferred.promise;
+    },
+
+    attendance: function (query) {
+      var deferred = $q.defer();
+
+      $http.get('/api/attendance.json', { params: query, cache: true })
+        .success(function (attendances) {
+          deferred.resolve(attendances);
         })
         .error(function (msg) {
           deferred.reject(msg);
@@ -219,15 +247,45 @@ app.service('SearchApi', function ($http, $q) {
 });
 
 app.controller('concordance', function ($scope, SearchApi) {
-  $scope.query = { glosaId: 47, distance: 3 }; // %
-  $scope.tags = [];
+  $scope.query = { glosaId: null, distance: 3 };
+  $scope.concordances = [];
 
   $scope.$watchCollection('query', function () {
     if ($scope.query.glosaId) {
-      SearchApi.concordance($scope.query).then(function (tags) {
-        console.log('loaded')
-        $scope.tags = tags;
+      SearchApi.concordance($scope.query).then(function (concordances) {
+        $scope.concordances = concordances;
       });
     }
   });
+});
+
+app.controller('collocation', function ($scope, SearchApi) {
+  $scope.query = { glosaId: 170, distance: 3 };
+  $scope.collocations = [];
+
+  $scope.$watchCollection('query', function () {
+    if ($scope.query.glosaId) {
+      SearchApi.collocation($scope.query).then(function (collocations) {
+        $scope.collocations = collocations;
+      });
+    }
+  });
+});
+
+app.controller('attendance', function ($scope, SearchApi) {
+  $scope.query = { min: 30, max: null };
+  $scope.attendances = [];
+
+  $scope.$watchCollection('query', function () {
+    if ($scope.query.min) {
+      SearchApi.attendance($scope.query).then(function (attendances) {
+        $scope.attendances = attendances;
+      });
+    }
+  });
+
+  $scope.show = function (attendance) {
+    console.log(attendance);
+    attendance.videoSrc = '/video/' + attendance.movie + '?from=' + attendance.from + '&to=' + attendance.to;
+  }
 });

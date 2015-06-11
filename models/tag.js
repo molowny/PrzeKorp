@@ -12,10 +12,10 @@ function normalizeTime(time) {
 
 // CREATE INDEX ON :Glosa(id)
 
-Tag.all = function (glosaId, nmns, distance, callback) {
+Tag.concordance = function (glosaId, nmns, distance, callback) {
   var query = [
-      'MATCH path=(g)<-[s:SHOWS]-(t:Tag)-[r:NEXT*..' + distance + ']-(t2:Tag)-[s2:SHOWS]->(g2)',
-      'WHERE g.id = {glosaId}',
+      'MATCH path=(g:Glosa)<-[s:SHOWS]-(t:Tag)-[r:NEXT*..' + distance + ']-(t2:Tag)-[s2:SHOWS]->(g2:Glosa)',
+      'WHERE g <> g2 AND g.id = {glosaId}',
       // 'WHERE t2.id = 465867',
       'RETURN g, g2, s, s2, collect(distinct t.movie) as movie, nodes(path) as path;'
   ].join('\n');
@@ -105,6 +105,29 @@ Tag.all = function (glosaId, nmns, distance, callback) {
     });
 
     return callback(result);
+  });
+}
+
+// MATCH path=(g)<-[s:SHOWS]-(t:Tag)-[r:NEXT*..3]-(t2:Tag)-[s2:SHOWS]->(g2)
+// WHERE g.id = 47
+// RETURN g, g2, s, s2, collect(distinct t.movie) as movie, nodes(path) as path;
+
+Tag.collocation = function (glosaId, nmns, distance, callback) {
+  var query = [
+      'MATCH path=(g:Glosa)<-[s:SHOWS]-(t:Tag)-[r:NEXT*..' + distance + ']-(t2:Tag)-[s2:SHOWS]->(g2:Glosa)',
+      'WHERE g <> g2 AND g.id = {glosaId}',
+      // 'WHERE t2.id = 465867',
+      'RETURN g2.name as name, g2.id as id, count(g2) as count ORDER BY count DESC;'
+  ].join('\n');
+
+  neoClient.query(query, { glosaId: glosaId, nmns: nmns }, function(err, results) {
+    if (err) throw err;
+
+    results = results.map(function (result) {
+      return result;
+    });
+
+    return callback(results);
   });
 }
 

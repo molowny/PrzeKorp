@@ -72,7 +72,7 @@ router.get('/poster/:file', function(req, res, next) {
       var ffmpeg = childProcess.spawn('ffmpeg', args, null);
 
       ffmpeg.stderr.on('data', function (data) {
-        console.log(data.toString());
+        // console.log(data.toString());
       });
 
       ffmpeg.stdout.on('end', function (data) {
