@@ -98,8 +98,6 @@ Tag.concordance = function (glosaId, nmns, distance, hand, callback) {
             items.push(tag);
           }
 
-          console.log(items.length);
-
           result.push({
             movie: movie,
             from: _.min(items, function (t) { return t.tag.timecode_start; }).tag.raw_timecode_start,
