@@ -1,26 +1,30 @@
 .angucomplete-holder {
     position: relative;
+    display: inline-block;
+
+    input {
+      width: 400px;
+    }
 }
 
 .angucomplete-dropdown {
-    border-color: #ececec;
+    border-color: $light-grey;
     border-width: 1px;
     border-style: solid;
     border-radius: 2px;
-    width: 400px;
+    width: 600px;
+    max-height: 300px;
     padding: 6px;
     cursor: pointer;
     z-index: 9999;
     position: absolute;
-    /*top: 32px;
-    left: 0px;
-    */
-    margin-top: -6px;
-    background-color: #ffffff;
+    margin-top: -20px;
+    background-color: $white;
+    overflow-y: scroll;
 }
 
 .angucomplete-searching {
-    color: #acacac;
+    color: $grey;
     font-size: 14px;
 }
 
@@ -30,14 +34,14 @@
 
 .angucomplete-row {
     padding: 5px;
-    color: #000000;
+    color: $grey;
     margin-bottom: 4px;
     clear: both;
 }
 
 .angucomplete-selected-row {
     background-color: $light-grey;
-    color: #ffffff;
+    color: $white;
 }
 
 .angucomplete-image-holder {
@@ -47,21 +51,21 @@
     margin-left: 5px;
 }
 
-.angucomplete-image {
-    height: 34px;
-    width: 34px;
-    border-radius: 50%;
-    border-color: #ececec;
-    border-style: solid;
-    border-width: 1px;
-}
+// .angucomplete-image {
+//     height: 34px;
+//     width: 34px;
+//     border-radius: 50%;
+//     border-color: #ececec;
+//     border-style: solid;
+//     border-width: 1px;
+// }
 
-.angucomplete-image-default {
-    /* Add your own default image here
-     background-image: url('/assets/default.png');
-    */
-    background-position: center;
-    background-size: contain;
-    height: 34px;
-    width: 34px;
-}
+// .angucomplete-image-default {
+//     /* Add your own default image here
+//      background-image: url('/assets/default.png');
+//     */
+//     background-position: center;
+//     background-size: contain;
+//     height: 34px;
+//     width: 34px;
+// }

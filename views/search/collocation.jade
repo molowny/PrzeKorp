@@ -8,15 +8,18 @@ block content
     //- h1 Konkordancja {{ tags.length }}
 
     form(action="")
-      //- label(for="nmns") NMNS:
-      //- select(name="nmns" ng-model="query.nmns")
-      //-   each n in nmnsList
-      //-     option(value="#{n.type}")= n.type
-
       label(for="glosa") Glosa:
-      select(name="glosa" ng-model="query.glosaId")
-        each g in glosaList
-          option(value="#{g.id}")= g.name
+      angucomplete-alt(
+        pause="400"
+        selected-object="autocomplete"
+        remote-url="/api/glosa-autocomplete.json?s="
+        remote-url-data-field="results"
+        search-fields="id"
+        title-field="name"
+        minlength="1"
+        text-searching="..."
+        text-no-results="Nie znaleziono pasujących wyników"
+      )
 
       label(for="distance") Odległość:
       select(name="distance" ng-model="query.distance")
@@ -30,8 +33,8 @@ block content
     table
       tbody
         tr(ng-repeat="collocation in collocations")
-          //- td
-          //-   a(href="" ng-click="show(attendance)" ng-hide="attendance.videoSrc") zobacz
-          //-   video(ng-show="attendance.videoSrc" ng-src="{{ attendance.videoSrc }}" controls)
+          td
+            a(href="" ng-click="show(collocation)" ng-hide="collocation.videoSrc") zobacz
+            video(ng-show="collocation.videoSrc" ng-src="{{ collocation.videoSrc }}" height="180" controls)
           td {{ collocation.name }}
           td {{ collocation.count }}

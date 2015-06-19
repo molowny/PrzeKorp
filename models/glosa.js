@@ -3,6 +3,36 @@ var neoClient = require('seraph')('http://localhost:7474');
 
 function Glosa () {}
 
+Glosa.count = function (callback) {
+  var query = [
+      'MATCH (g:Glosa) RETURN count(g) as count;'
+  ].join('\n');
+
+  neoClient.query(query, {}, function(err, result) {
+    if (err) throw err;
+    return callback(result.count);
+  });
+}
+
+Glosa.find = function (id, callback) {
+  var query = [
+      'MATCH (g:Glosa)<-[r:SHOWS]-(t:Tag)',
+      'WHERE g.id = {id}',
+      'RETURN g, t limit 1;'
+  ].join('\n');
+
+  neoClient.query(query, { id: id }, function(err, results) {
+    if (err) throw err;
+
+    result = results.shift();
+
+    return callback({
+      g: result.g,
+      t: result.t
+    });
+  });
+}
+
 Glosa.all = function (callback) {
   var query = [
       'MATCH (g:Glosa) RETURN g.name as name, g.id as id;'
@@ -34,7 +64,7 @@ Glosa.attendance = function (min, max, callback) {
       'MATCH (g:Glosa)<-[r:SHOWS]-(t:Tag)',
       'WITH g, count(r) as count',
       isNaN(max) ? 'WHERE count >= {min}' : 'WHERE count >= {min} AND count <= {max}',
-      'RETURN g, count ORDER BY count DESC;'
+      'RETURN g.id as id, g.name as name, count ORDER BY count DESC;'
   ].join('\n');
 
   neoClient.query(query, { min: min, max: max }, function(err, results) {

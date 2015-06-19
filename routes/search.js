@@ -7,33 +7,24 @@ var Tag = require('../models/tag');
 
 router.get('/concordance', function(req, res, next) {
   Nmns.all(function (nmns) {
-    Glosa.all(function (glosa) {
-      res.render('search/concordance', {
-        nmnsList: nmns,
-        glosaList: glosa
-      });
+    res.render('search/concordance', {
+      nmnsList: nmns
     });
   });
 });
 
 router.get('/collocation', function(req, res, next) {
   Nmns.all(function (nmns) {
-    Glosa.all(function (glosa) {
-      res.render('search/collocation', {
-        nmnsList: nmns,
-        glosaList: glosa
-      });
+    res.render('search/collocation', {
+      nmnsList: nmns
     });
   });
 });
 
 router.get('/attendance', function(req, res, next) {
-  Nmns.all(function (nmns) {
-    Glosa.all(function (glosa) {
-      res.render('search/attendance', {
-        nmnsList: nmns,
-        glosaList: glosa
-      });
+  Glosa.count(function (count) {
+    res.render('search/attendance', {
+      glosaCount: count
     });
   });
 });

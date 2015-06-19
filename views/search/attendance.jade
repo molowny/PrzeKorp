@@ -16,13 +16,14 @@ block content
 
       //- button(type="submit") Szukaj
 
-    p.alert(ng-hide="attendances.length") Brak wyników
+    p.alert(ng-hide="attendances.length") Brak wyników.
 
     table
       tbody
         tr(ng-repeat="attendance in attendances")
-          //- td
-          //-   a(href="" ng-click="show(attendance)" ng-hide="attendance.videoSrc") zobacz
-          //-   video(ng-show="attendance.videoSrc" ng-src="{{ attendance.videoSrc }}" controls)
-          td {{ attendance.g.name }}
+          td
+            a(href="" ng-click="show(attendance)" ng-hide="attendance.videoSrc") zobacz
+            video(ng-show="attendance.videoSrc" ng-src="{{ attendance.videoSrc }}" height="180" controls)
+          td {{ attendance.name }}
           td {{ attendance.count }}
+          td {{ attendance.count / #{glosaCount} | percentage:2 }}

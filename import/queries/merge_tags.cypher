@@ -1,3 +1,3 @@
-MATCH (n:Tag), (m:Tag)
-WHERE n <> m AND n.timecode_start = m.timecode_end AND n.movie = m.movie
-CREATE (n)-[:NEXT]->(m)
+MATCH (n:Tag {movie: {name}}), (m:Tag {movie: {name}})
+WHERE n <> m AND n.timecode_start = m.timecode_end
+CREATE UNIQUE (n)-[:NEXT]->(m)

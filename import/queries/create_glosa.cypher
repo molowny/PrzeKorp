@@ -1,1 +1,1 @@
-CREATE (:Glosa { name: {name}, id: {id} })
+MERGE (:Glosa { name: {name}, id: {id}, glosaId: {id} })

@@ -7,27 +7,24 @@ block content
   .concordance(ng-controller="concordance")
     //- h1 Konkordancja {{ tags.length }}
 
-    //- angucomplete-alt(
-    //-   pause="400"
-    //-   selected-object="query.glosaId"
-    //-   remote-url="/api/glosa-autocomplete.json?s="
-    //-   remote-url-data-field="results"
-    //-   title-field="name"
-    //-   minlength="1"
-    //- )
-
     form(action="")
-      //- label(for="nmns") NMNS:
-      //- select(name="nmns" ng-model="query.nmns")
-      //-   each n in nmnsList
-      //-     option(value="#{n.type}")= n.type
-
       label(for="glosa") Glosa:
-      select(name="glosa" ng-model="query.glosaId")
-        each g in glosaList
-          option(value="#{g.id}")= g.name
+      angucomplete-alt(
+        pause="400"
+        selected-object="autocomplete"
+        remote-url="/api/glosa-autocomplete.json?s="
+        remote-url-data-field="results"
+        search-fields="id"
+        title-field="name"
+        minlength="1"
+        text-searching="..."
+        text-no-results="Nie znaleziono pasujących wyników"
+      )
 
-
+      label(for="distance") Ręka:
+      select(name="hand" ng-model="query.hand")
+        option(value="primary") Dominująca
+        option(value="secondary") Niedominująca
 
       label(for="distance") Odległość:
       select(name="distance" ng-model="query.distance")
@@ -36,6 +33,13 @@ block content
 
       //- button(type="submit") Szukaj
 
+    .legend
+      .legent-current szukana głosa
+      .legent-primary ręka dominująca
+      .legent-secondary ręka niedominująca
+      .legent-nmns elementy niemanualne
+
+
     p.alert(ng-hide="concordances.length") Brak wyników.
 
-    timeline(ng-repeat="concordance in concordances" data="concordance")
+    timeline(ng-repeat="concordance in concordances" data="concordance" glosa="query.glosaId")

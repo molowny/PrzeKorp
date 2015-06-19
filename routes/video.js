@@ -8,7 +8,7 @@ var path = require('path');
 
 router.get('/:file', function(req, res, next) {
   // tmp
-  req.params.file = 'K06BF01-13';
+  // req.params.file = 'K03AF01-21';
 
   var convertTo = 'mp4';
   var fileName = req.params.file + '.mov';
@@ -50,7 +50,7 @@ router.get('/:file', function(req, res, next) {
 
 router.get('/poster/:file', function(req, res, next) {
   // tmp
-  req.params.file = 'K06BF01-13';
+  // req.params.file = 'K03AF01-21';
 
   var convertTo = 'jpg';
   var fileName = req.params.file + '.mov';

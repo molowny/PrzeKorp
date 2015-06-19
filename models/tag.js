@@ -12,15 +12,16 @@ function normalizeTime(time) {
 
 // CREATE INDEX ON :Glosa(id)
 
-Tag.concordance = function (glosaId, nmns, distance, callback) {
+Tag.concordance = function (glosaId, nmns, distance, hand, callback) {
   var query = [
-      'MATCH path=(g:Glosa)<-[s:SHOWS]-(t:Tag)-[r:NEXT*..' + distance + ']-(t2:Tag)-[s2:SHOWS]->(g2:Glosa)',
-      'WHERE g <> g2 AND g.id = {glosaId}',
-      // 'WHERE t2.id = 465867',
-      'RETURN g, g2, s, s2, collect(distinct t.movie) as movie, nodes(path) as path;'
+    'MATCH path=(g:Glosa)<-[s:SHOWS]-(t:Tag)-[r:NEXT*..' + distance + ']-(t2:Tag)-[s2:SHOWS]->(g2)',
+    'WHERE g <> g2 AND g.id = {glosaId} AND s.hand = {hand}', //
+    'RETURN g, g2, s, s2, collect(distinct t.movie) as movie, nodes(path) as path;'
   ].join('\n');
 
-  neoClient.query(query, { glosaId: glosaId, nmns: nmns }, function(err, results) {
+  console.log(query);
+
+  neoClient.query(query, { glosaId: glosaId, nmns: nmns, hand: hand }, function(err, results) {
     if (err) throw err;
 
     results = results.map(function (result) {
@@ -38,7 +39,8 @@ Tag.concordance = function (glosaId, nmns, distance, callback) {
       result.fromGlosa = {
         glosa: glosa,
         tag: tag,
-        hand: result.s.properties.hand
+        hand: result.s.properties.hand,
+        value: result.s2.properties.value
       };
 
       var glosa = result.path.pop();
@@ -52,15 +54,14 @@ Tag.concordance = function (glosaId, nmns, distance, callback) {
       result.toGlosa = {
         glosa: glosa,
         tag: tag,
-        hand: result.s2.properties.hand
+        hand: result.s2.properties.hand,
+        value: result.s2.properties.value
       };
 
       return result;
     });
 
     var tags = [];
-
-    // console.log(results);
 
     _.forEach(results, function (tag) {
       tags.push(tag.fromGlosa);
@@ -75,6 +76,12 @@ Tag.concordance = function (glosaId, nmns, distance, callback) {
       return tag.tag.timecode_start;
     });
 
+    _.forEach(tags, function (tag, i) {
+      tag.id = i;
+    });
+
+    console.log(tags.length);
+
     tags = _.groupBy(tags, function (tag) {
       return tag.tag.movie;
     });
@@ -87,6 +94,12 @@ Tag.concordance = function (glosaId, nmns, distance, callback) {
 
       _.forEach(movieTags, function (tag, i) {
         if ((tag.tag.timecode_start - start > breakDuration || i + 1 == movieTags.length) && items.length > 0) {
+          if (tag.tag.timecode_start - start <= breakDuration) {
+            items.push(tag);
+          }
+
+          console.log(items.length);
+
           result.push({
             movie: movie,
             from: _.min(items, function (t) { return t.tag.timecode_start; }).tag.raw_timecode_start,
@@ -94,13 +107,12 @@ Tag.concordance = function (glosaId, nmns, distance, callback) {
             items: items
           });
 
-          items = [tag];
+          items = [];
         } else {
           items.push(tag);
-          start = tag.tag.timecode_start;
         }
 
-
+        start = tag.tag.timecode_start;
       });
     });
 
@@ -114,10 +126,10 @@ Tag.concordance = function (glosaId, nmns, distance, callback) {
 
 Tag.collocation = function (glosaId, nmns, distance, callback) {
   var query = [
-      'MATCH path=(g:Glosa)<-[s:SHOWS]-(t:Tag)-[r:NEXT*..' + distance + ']-(t2:Tag)-[s2:SHOWS]->(g2:Glosa)',
-      'WHERE g <> g2 AND g.id = {glosaId}',
-      // 'WHERE t2.id = 465867',
-      'RETURN g2.name as name, g2.id as id, count(g2) as count ORDER BY count DESC;'
+    'MATCH path=(g:Glosa)<-[s:SHOWS]-(t:Tag)-[r:NEXT*..' + distance + ']-(t2:Tag)-[s2:SHOWS]->(g2:Glosa)',
+    'WHERE g <> g2 AND g.id = {glosaId}',
+    // 'WHERE t2.id = 465867',
+    'RETURN g2.name as name, g2.id as id, count(g2) as count ORDER BY count DESC;'
   ].join('\n');
 
   neoClient.query(query, { glosaId: glosaId, nmns: nmns }, function(err, results) {

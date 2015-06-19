@@ -7,9 +7,44 @@ main {
     margin-bottom: 20px;
   }
 
+  .legend {
+    margin-left: 10px;
+    div {
+      display: inline-block;
+      margin: 0 20px 20px;
+      position: relative;
+
+      &:before {
+        display: block;
+        content: '';
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        top: 0;
+        left: -30px;
+      }
+    }
+
+    .legent-current:before {
+      background: red;
+    }
+
+    .legent-primary:before {
+      background: #0d5fa6;
+    }
+
+    .legent-secondary:before {
+      background: #d39942;
+    }
+
+    .legent-nmns:before {
+      background: #61584e;
+    }
+  }
+
   .timeline {
     @include clearfix;
-    margin-bottom: 25px;
+    margin-bottom: 50px;
     background: $light-grey;
     position: relative;
 
@@ -32,7 +67,7 @@ main {
 
     .details {
       position: absolute;
-      top: 0;
+      bottom: -25px;
       right: 0;
     }
   }

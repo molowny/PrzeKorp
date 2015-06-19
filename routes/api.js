@@ -6,7 +6,7 @@ var Glosa = require('../models/glosa');
 var Tag = require('../models/tag');
 
 router.get('/concordance.json', function(req, res, next) {
-  Tag.concordance(parseInt(req.query.glosaId), null, parseInt(req.query.distance), function (concordances) {
+  Tag.concordance(parseInt(req.query.glosaId), null, parseInt(req.query.distance), req.query.hand, function (concordances) {
     res.json(concordances);
   });
 });
@@ -20,6 +20,12 @@ router.get('/collocation.json', function(req, res, next) {
 router.get('/attendance.json', function(req, res, next) {
   Glosa.attendance(parseInt(req.query.min), parseInt(req.query.max), function (attendances) {
     res.json(attendances);
+  });
+});
+
+router.get('/glosa.json', function(req, res, next) {
+  Glosa.find(parseInt(req.query.id), function (glosa) {
+    res.json(glosa);
   });
 });
 

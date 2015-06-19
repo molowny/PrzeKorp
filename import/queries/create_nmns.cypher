@@ -1,1 +1,1 @@
-CREATE (:Nmns { type: {type} })
+MERGE (:Nmns { type: {type} })

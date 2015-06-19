@@ -50,6 +50,7 @@ neoClient.query(getQuery('clear.cypher'), function () {
             console.log('Tags in postgres: ' + result.rows.length);
 
             var txnTag = neoClient.batch();
+            var txnTag2 = neoClient.batch();
 
             result.rows.forEach(function (tag) {
               if (['glosa', 'glosa_druga_reka'].indexOf(tag.tier) != -1) {
