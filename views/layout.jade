@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title Korpus PJM
+    title PrzeKorp
     link(rel='stylesheet', href='/stylesheets/style.css')
 
     script(src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.3/lodash.js")
@@ -13,19 +13,16 @@ html
     .content
       aside
         header
-          h1 Korpus PJM
+          h1 PrzeKorp
         nav
           ol
             block sidebar
+            li.collapse(class=activeTab === 'help' ? 'active' : ''): a(href="/help") Info
             li.collapse(class=activeTab === 'concordance' ? 'active' : ''): a(href="/search/concordance") Konkordancja
             li.collapse(class=activeTab === 'collocation' ? 'active' : ''): a(href="/search/collocation") Kolokacja
             li.collapse(class=activeTab === 'attendance' ? 'active' : ''): a(href="/search/attendance") Lista frekwencyjna
-            li.collapse(class=activeTab === 'help' ? 'active' : ''): a(href="/help") Pomoc
 
       main.ng-cloak
         block content
-
-
-
 
    script(src="/javascripts/main.js")

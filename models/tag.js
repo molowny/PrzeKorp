@@ -15,11 +15,11 @@ function normalizeTime(time) {
 Tag.concordance = function (glosaId, nmns, distance, hand, callback) {
   var query = [
     'MATCH path=(g:Glosa)<-[s:SHOWS]-(t:Tag)-[r:NEXT*..' + distance + ']-(t2:Tag)-[s2:SHOWS]->(g2)',
-    'WHERE g <> g2 AND g.id = {glosaId} AND s.hand = {hand}', //
+    'WHERE g.id = {glosaId} AND s.hand = {hand}', //
     'RETURN g, g2, s, s2, collect(distinct t.movie) as movie, nodes(path) as path;'
   ].join('\n');
 
-  console.log(query);
+  // console.log(query);
 
   neoClient.query(query, { glosaId: glosaId, nmns: nmns, hand: hand }, function(err, results) {
     if (err) throw err;
@@ -89,7 +89,7 @@ Tag.concordance = function (glosaId, nmns, distance, hand, callback) {
     var result = [];
 
     _.forEach(tags, function (movieTags, movie) {
-      var breakDuration = 10;
+      var breakDuration = 5;
       var start = 0, items = [];
 
       _.forEach(movieTags, function (tag, i) {
@@ -129,6 +129,8 @@ Tag.collocation = function (glosaId, nmns, distance, callback) {
     // 'WHERE t2.id = 465867',
     'RETURN g2.name as name, g2.id as id, count(g2) as count ORDER BY count DESC;'
   ].join('\n');
+
+  // console.log(query);
 
   neoClient.query(query, { glosaId: glosaId, nmns: nmns }, function(err, results) {
     if (err) throw err;

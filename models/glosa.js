@@ -67,6 +67,8 @@ Glosa.attendance = function (min, max, callback) {
       'RETURN g.id as id, g.name as name, count ORDER BY count DESC;'
   ].join('\n');
 
+  console.log(query);
+
   neoClient.query(query, { min: min, max: max }, function(err, results) {
     if (err) throw err;
 
